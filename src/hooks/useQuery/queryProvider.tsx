@@ -1,7 +1,7 @@
 import React from 'react'
 import Query from './query'
 
-export const context = React.createContext({} as Query)
+export const context = React.createContext<Query | undefined>(undefined)
 
 export function ReactQueryProvider({
   children,

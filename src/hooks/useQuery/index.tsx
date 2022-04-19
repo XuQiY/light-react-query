@@ -1,5 +1,4 @@
 import React,{ useEffect, useRef, useState, useContext} from 'react'
-import Query from './query'
 // import{CacheProps} from './type'
 import {context} from './queryProvider'
 import { replaceEqualDeep } from './utils'
@@ -11,9 +10,7 @@ type Options = {
   retryTime?:number
 }
 
-// export type useQuery<T> = (key:string,func: Promise<T>,options:Options)=>CacheProps
 
-// const DEFAULT_CACHE_TIME = 5*60*1000
 const DEFAULT_CACHE_TIME = 20 * 1000
 const RETRY_DELAY = 3*1000
 
@@ -22,8 +19,8 @@ export const useQuery = (
   func: () => Promise<any>,
   options: Options
 ) => {
-  const query = useContext(context) as Query;
-  const [isLoading, setIsLoading] = useState(!!!query.getCache(key))
+  const query = useContext(context)
+  const [isLoading, setIsLoading] = useState(!!!query?.getCache(key))
   const [isError, setIsError] = useState(false)
   const [isFetching, setIsFetching] = useState(false)
   const [data, setData] = useState()
@@ -38,7 +35,7 @@ export const useQuery = (
     if(options?.refetchOnWindowFocus){
         onFocus2Fetch(key)
     }else{
-        query.focusHandle.hasSubscribe(key) && query.focusHandle.removeSubscribe(key)
+        query?.focusHandle.hasSubscribe(key) && query?.focusHandle.removeSubscribe(key)
     }
   },[options.refetchOnWindowFocus])
 
@@ -50,10 +47,10 @@ export const useQuery = (
       setIsFetching(false)
       setIsError(true)
 
-      if(!replaceEqualDeep(data,query.getCache(key))){
+      if(!replaceEqualDeep(data,query?.getCache(key))){
         setData(data)
       }
-      query.setCache(key, {
+      query?.setCache(key, {
         data,
         ...options,
         cacheTime: options?.cacheTime || DEFAULT_CACHE_TIME,
@@ -71,7 +68,7 @@ export const useQuery = (
   }
 
   const fetchDataFromCache = (key: string) => {
-    const cache = query.getCache(key)
+    const cache = query?.getCache(key)
     if (cache) {
       setData(cache.data)
       fetchDataFromServe(key)
@@ -82,7 +79,7 @@ export const useQuery = (
   }
 
   const onFocus2Fetch = (key:string) => {
-    query.focusHandle.addSubscribe(key,()=>fetchDataFromCache(key))
+    query?.focusHandle.addSubscribe(key,()=>fetchDataFromCache(key))
   }
 
   return { isLoading, isError, isFetching, data }
