@@ -48,6 +48,7 @@ export const useQuery = (
       const data = await func()
       setIsLoading(false)
       setIsFetching(false)
+      setIsError(true)
 
       if(!replaceEqualDeep(data,query.getCache(key))){
         setData(data)
